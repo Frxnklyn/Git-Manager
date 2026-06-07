@@ -7,6 +7,13 @@ import { DirectoryManager } from "@frxnklyn/file-manager";
 import { GitManager } from "./GitManager.js";
 import type { AdvancedGitDirectoryManagerInterface } from "./interfaces/AdvancedGitDirectoryManagerInterface.js";
 
+/**
+ * Kombiniert den vorhandenen DirectoryManager mit einem internen GitManager.
+ * Der GitManager verwendet einen DirectoryCommandRunner, der diese Instanz als
+ * DirectoryInterface speichert und dadurch immer ihren aktuellen Pfad nutzt.
+ *
+ * @author Frxnklyn
+ */
 export class AdvancedGitDirectoryManager
   extends DirectoryManager
   implements AdvancedGitDirectoryManagerInterface

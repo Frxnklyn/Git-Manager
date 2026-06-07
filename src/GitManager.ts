@@ -7,6 +7,12 @@ import type {
 import type { DirectoryInterface } from "@frxnklyn/directory-contracts";
 import type { GitManagerInterface } from "./interfaces/GitManagerInterface.js";
 
+/**
+ * Erstellt Git-Commands und delegiert deren Ausfuehrung an einen uebergebenen
+ * CommandRunnerInterface. Der Runner kann pfadlos oder path-aware sein.
+ *
+ * @author Frxnklyn
+ */
 export class GitManager implements GitManagerInterface {
   constructor(private readonly commandRunner: CommandRunnerInterface) {}
 
