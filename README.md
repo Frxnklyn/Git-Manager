@@ -18,13 +18,13 @@ await git.status(directory);
 await git.pull(directory);
 ```
 
-Mit einem `DirectoryCommandRunner` speichert der Runner das Directory selbst. Dann benoetigen die Git-Methoden kein Directory-Argument:
+Ein `DirectoryCommandRunner` ist selbst ein DirectoryManager. Dann benoetigen die Git-Methoden kein Directory-Argument:
 
 ```ts
 import { DirectoryCommandRunner } from "@frxnklyn/command-runner";
 import { GitManager } from "@frxnklyn/git-manager";
 
-const git = new GitManager(new DirectoryCommandRunner(directory));
+const git = new GitManager(new DirectoryCommandRunner("C:/dev/my-repo"));
 
 await git.status();
 await git.pull();
@@ -32,9 +32,9 @@ await git.pull();
 
 ## AdvancedGitDirectoryManager
 
-`AdvancedGitDirectoryManager` ist bewusst eine bequeme Kombi-Variante fuer den konkreten Git-Directory-Anwendungsfall. Sie erweitert den aus `@frxnklyn/file-manager` exportierten `DirectoryManager` und benoetigt im Konstruktor nur einen Pfad.
+`AdvancedGitDirectoryManager` ist bewusst eine bequeme Kombi-Variante fuer den konkreten Git-Directory-Anwendungsfall. Sie erweitert `DirectoryCommandRunner` und benoetigt im Konstruktor nur einen Pfad.
 
-Intern erstellt sie einen `GitManager`. Dieser verwendet einen `DirectoryCommandRunner`, der das `AdvancedGitDirectoryManager`-Objekt selbst als `DirectoryInterface` speichert. `status()`, `pull()` und `getSuggestedActions()` delegieren an den internen `GitManager`. Dadurch verwenden auch Commands nach `setPath()` oder `moveTo()` automatisch den aktuellen Directory-Pfad.
+Intern erstellt sie einen `GitManager` mit sich selbst als CommandRunner. `status()`, `pull()` und `getSuggestedActions()` delegieren an diesen GitManager. Dadurch verwenden auch Commands nach `setPath()` oder `moveTo()` automatisch den aktuellen Directory-Pfad.
 
 ```ts
 import { AdvancedGitDirectoryManager } from "@frxnklyn/git-manager/advanced";
@@ -47,9 +47,9 @@ directory.moveTo("packages/example");
 await directory.status();
 ```
 
-`Command-Runner` bleibt trotzdem unabhaengig vom `DirectoryManager`: Prozessausfuehrung ist wiederverwendbare Infrastruktur. Nur dieses Git-spezifische Package kombiniert Directory- und Git-Funktionalitaet.
+`NodeCommandRunner` und `PathAwareCommandRunner` bleiben unabhaengig vom `DirectoryManager`. `DirectoryCommandRunner` kombiniert Directory- und Command-Funktionalitaet bewusst; die Advanced-Variante ergaenzt darauf Git-Funktionalitaet.
 
-Die Advanced-Variante liegt in einem eigenen Export-Subpath, damit der normale `GitManager` nicht zur Laufzeit den vollstaendigen `@frxnklyn/file-manager` laden muss. Der aktuelle Build des bestehenden File-Manager-Repositories wirft beim Root-Import einen Fehler in einer zirkulaeren Editor-Abhaengigkeit. Sobald dieser Upstream-Fehler behoben ist, ist die Advanced-Variante ohne weitere Anpassung nutzbar.
+Die Advanced-Variante liegt in einem eigenen Export-Subpath. `DirectoryCommandRunner` verwendet den isolierten `@frxnklyn/file-manager/directory-manager`-Export und muss dadurch nicht den vollstaendigen File-Manager-Root-Export laden.
 
 ## Interne Dependencies
 

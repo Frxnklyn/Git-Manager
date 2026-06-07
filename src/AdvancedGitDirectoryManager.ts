@@ -3,26 +3,24 @@ import type {
   CommandSuggestionInterface,
 } from "@frxnklyn/command-contracts";
 import { DirectoryCommandRunner } from "@frxnklyn/command-runner";
-import { DirectoryManager } from "@frxnklyn/file-manager";
 import { GitManager } from "./GitManager.js";
 import type { AdvancedGitDirectoryManagerInterface } from "./interfaces/AdvancedGitDirectoryManagerInterface.js";
 
 /**
- * Kombiniert den vorhandenen DirectoryManager mit einem internen GitManager.
- * Der GitManager verwendet einen DirectoryCommandRunner, der diese Instanz als
- * DirectoryInterface speichert und dadurch immer ihren aktuellen Pfad nutzt.
+ * Erweitert den DirectoryCommandRunner um einen internen GitManager. Dieselbe
+ * Instanz verwaltet Directory, Command-Ausfuehrung und Git-Arbeitsverzeichnis.
  *
  * @author Frxnklyn
  */
 export class AdvancedGitDirectoryManager
-  extends DirectoryManager
+  extends DirectoryCommandRunner
   implements AdvancedGitDirectoryManagerInterface
 {
   private readonly gitManager: GitManager;
 
   constructor(path: string) {
     super(path);
-    this.gitManager = new GitManager(new DirectoryCommandRunner(this));
+    this.gitManager = new GitManager(this);
   }
 
   status(): Promise<CommandResultInterface> {
