@@ -1,0 +1,50 @@
+{
+  "name": "@frxnklyn/git-manager",
+  "version": "0.1.0",
+  "description": "Git-specific manager built on command and directory contracts.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./advanced": {
+      "types": "./dist/advanced.d.ts",
+      "import": "./dist/advanced.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "typescript",
+    "git",
+    "manager",
+    "directory"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Frxnklyn/Git-Manager.git"
+  },
+  "peerDependencies": {
+    "@frxnklyn/command-contracts": "github:Frxnklyn/npm-command-contracts",
+    "@frxnklyn/directory-contracts": "github:Frxnklyn/npm-directory-contracts",
+    "@frxnklyn/file-manager": "github:Frxnklyn/File-Manager"
+  },
+  "devDependencies": {
+    "@frxnklyn/command-contracts": "file:../npm-command-contracts",
+    "@frxnklyn/directory-contracts": "file:../npm-directory-contracts",
+    "@frxnklyn/file-manager": "file:../File-Manager",
+    "typescript": "^5.9.3"
+  }
+}
