@@ -38,11 +38,13 @@
   },
   "peerDependencies": {
     "@frxnklyn/command-contracts": "github:Frxnklyn/npm-command-contracts",
+    "@frxnklyn/command-runner": "github:Frxnklyn/Command-Runner",
     "@frxnklyn/directory-contracts": "github:Frxnklyn/npm-directory-contracts",
     "@frxnklyn/file-manager": "github:Frxnklyn/File-Manager"
   },
   "devDependencies": {
     "@frxnklyn/command-contracts": "file:../npm-command-contracts",
+    "@frxnklyn/command-runner": "file:../Command-Runner",
     "@frxnklyn/directory-contracts": "file:../npm-directory-contracts",
     "@frxnklyn/file-manager": "file:../File-Manager",
     "typescript": "^5.9.3"

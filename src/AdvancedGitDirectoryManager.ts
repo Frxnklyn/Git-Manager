@@ -1,8 +1,12 @@
 import type {
   CommandResultInterface,
-  CommandRunnerInterface,
   CommandSuggestionInterface,
+  PathAwareCommandRunnerInterface,
 } from "@frxnklyn/command-contracts";
+import {
+  NodeCommandRunner,
+  PathAwareCommandRunner,
+} from "@frxnklyn/command-runner";
 import { DirectoryManager } from "@frxnklyn/file-manager";
 import type { AdvancedGitDirectoryManagerInterface } from "./interfaces/AdvancedGitDirectoryManagerInterface.js";
 
@@ -10,26 +14,31 @@ export class AdvancedGitDirectoryManager
   extends DirectoryManager
   implements AdvancedGitDirectoryManagerInterface
 {
-  constructor(
-    path: string,
-    private readonly commandRunner: CommandRunnerInterface,
-  ) {
+  private readonly commandRunner: PathAwareCommandRunnerInterface;
+
+  constructor(path: string) {
     super(path);
+    this.commandRunner = new PathAwareCommandRunner(
+      new NodeCommandRunner(),
+      this.getPath(),
+    );
+  }
+
+  private getCommandRunner(): PathAwareCommandRunnerInterface {
+    return this.commandRunner.setCwd(this.getPath());
   }
 
   status(): Promise<CommandResultInterface> {
-    return this.commandRunner.run({
+    return this.getCommandRunner().run({
       command: "git",
       args: ["status"],
-      cwd: this.getPath(),
     });
   }
 
   pull(): Promise<CommandResultInterface> {
-    return this.commandRunner.run({
+    return this.getCommandRunner().run({
       command: "git",
       args: ["pull"],
-      cwd: this.getPath(),
     });
   }
 

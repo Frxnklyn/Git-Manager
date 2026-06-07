@@ -20,17 +20,18 @@ await git.pull(directory);
 
 ## AdvancedGitDirectoryManager
 
-`AdvancedGitDirectoryManager` ist bewusst eine bequeme Kombi-Variante fuer den konkreten Git-Directory-Anwendungsfall. Sie erweitert den aus `@frxnklyn/file-manager` exportierten `DirectoryManager`, besitzt intern einen `CommandRunnerInterface` und fuehrt Git-Kommandos mit dem eigenen Pfad als `cwd` aus.
+`AdvancedGitDirectoryManager` ist bewusst eine bequeme Kombi-Variante fuer den konkreten Git-Directory-Anwendungsfall. Sie erweitert den aus `@frxnklyn/file-manager` exportierten `DirectoryManager` und benoetigt im Konstruktor nur einen Pfad.
+
+Intern erstellt sie selbst einen `NodeCommandRunner` und umschliesst ihn mit einem `PathAwareCommandRunner`. Vor jedem Git-Command wird dessen CWD mit dem aktuellen Directory-Pfad synchronisiert. Dadurch verwenden auch Commands nach `setPath()` oder `moveTo()` automatisch den neuen Pfad.
 
 ```ts
-import { NodeCommandRunner } from "@frxnklyn/command-runner";
 import { AdvancedGitDirectoryManager } from "@frxnklyn/git-manager/advanced";
 
-const directory = new AdvancedGitDirectoryManager(
-  "C:/dev/my-repo",
-  new NodeCommandRunner(),
-);
+const directory = new AdvancedGitDirectoryManager("C:/dev/my-repo");
 
+await directory.status();
+
+directory.moveTo("packages/example");
 await directory.status();
 ```
 
@@ -43,6 +44,7 @@ Die Advanced-Variante liegt in einem eigenen Export-Subpath, damit der normale `
 Fuer lokale Entwicklung verweisen die `devDependencies` auf die benachbarten Repositories:
 
 - `../npm-command-contracts`
+- `../Command-Runner`
 - `../npm-directory-contracts`
 - `../File-Manager`
 
