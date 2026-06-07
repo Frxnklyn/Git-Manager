@@ -2,6 +2,7 @@ import type {
   CommandResultInterface,
   CommandRunnerInterface,
   CommandSuggestionInterface,
+  PathAwareCommandRunnerInterface,
 } from "@frxnklyn/command-contracts";
 import type { DirectoryInterface } from "@frxnklyn/directory-contracts";
 import type { GitManagerInterface } from "./interfaces/GitManagerInterface.js";
@@ -9,19 +10,28 @@ import type { GitManagerInterface } from "./interfaces/GitManagerInterface.js";
 export class GitManager implements GitManagerInterface {
   constructor(private readonly commandRunner: CommandRunnerInterface) {}
 
-  status(directory: DirectoryInterface): Promise<CommandResultInterface> {
+  private getPath(directory?: DirectoryInterface): string | undefined {
+    if (directory) return directory.getPath();
+
+    const pathAwareRunner = this.commandRunner as Partial<PathAwareCommandRunnerInterface>;
+    return typeof pathAwareRunner.getPath === "function"
+      ? pathAwareRunner.getPath()
+      : undefined;
+  }
+
+  status(directory?: DirectoryInterface): Promise<CommandResultInterface> {
     return this.commandRunner.run({
       command: "git",
       args: ["status"],
-      cwd: directory.getPath(),
+      ...(directory ? { cwd: directory.getPath() } : {}),
     });
   }
 
-  pull(directory: DirectoryInterface): Promise<CommandResultInterface> {
+  pull(directory?: DirectoryInterface): Promise<CommandResultInterface> {
     return this.commandRunner.run({
       command: "git",
       args: ["pull"],
-      cwd: directory.getPath(),
+      ...(directory ? { cwd: directory.getPath() } : {}),
     });
   }
 
@@ -32,8 +42,8 @@ export class GitManager implements GitManagerInterface {
     });
   }
 
-  getSuggestedActions(directory: DirectoryInterface): CommandSuggestionInterface[] {
-    const cwd = directory.getPath();
+  getSuggestedActions(directory?: DirectoryInterface): CommandSuggestionInterface[] {
+    const cwd = this.getPath(directory);
 
     return [
       {
@@ -43,7 +53,7 @@ export class GitManager implements GitManagerInterface {
         command: {
           command: "git",
           args: ["status"],
-          cwd,
+          ...(cwd ? { cwd } : {}),
         },
         safeToRunAutomatically: true,
       },
@@ -54,7 +64,7 @@ export class GitManager implements GitManagerInterface {
         command: {
           command: "git",
           args: ["pull"],
-          cwd,
+          ...(cwd ? { cwd } : {}),
         },
         safeToRunAutomatically: false,
       },

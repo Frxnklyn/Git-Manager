@@ -18,11 +18,23 @@ await git.status(directory);
 await git.pull(directory);
 ```
 
+Mit einem `DirectoryCommandRunner` speichert der Runner das Directory selbst. Dann benoetigen die Git-Methoden kein Directory-Argument:
+
+```ts
+import { DirectoryCommandRunner } from "@frxnklyn/command-runner";
+import { GitManager } from "@frxnklyn/git-manager";
+
+const git = new GitManager(new DirectoryCommandRunner(directory));
+
+await git.status();
+await git.pull();
+```
+
 ## AdvancedGitDirectoryManager
 
 `AdvancedGitDirectoryManager` ist bewusst eine bequeme Kombi-Variante fuer den konkreten Git-Directory-Anwendungsfall. Sie erweitert den aus `@frxnklyn/file-manager` exportierten `DirectoryManager` und benoetigt im Konstruktor nur einen Pfad.
 
-Intern erstellt sie selbst einen `NodeCommandRunner` und umschliesst ihn mit einem `PathAwareCommandRunner`. Vor jedem Git-Command wird dessen CWD mit dem aktuellen Directory-Pfad synchronisiert. Dadurch verwenden auch Commands nach `setPath()` oder `moveTo()` automatisch den neuen Pfad.
+Intern erstellt sie einen `GitManager`. Dieser verwendet einen `DirectoryCommandRunner`, der das `AdvancedGitDirectoryManager`-Objekt selbst als `DirectoryInterface` speichert. `status()`, `pull()` und `getSuggestedActions()` delegieren an den internen `GitManager`. Dadurch verwenden auch Commands nach `setPath()` oder `moveTo()` automatisch den aktuellen Directory-Pfad.
 
 ```ts
 import { AdvancedGitDirectoryManager } from "@frxnklyn/git-manager/advanced";
