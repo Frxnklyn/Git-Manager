@@ -2,7 +2,17 @@ import type {
   CommandResultInterface,
   CommandSuggestionInterface,
 } from "@frxnklyn/command-contracts";
-import type { DirectoryInterface } from "@frxnklyn/directory-contracts";
+import type {
+  GitDirectoryInterface,
+  GitignoreFileInterface,
+  GitSubmoduleInterface,
+} from "@frxnklyn/directory-contracts";
+import type {
+  GitHubForkInterface,
+  GitHubRepositoryInterface,
+  GitHubUserInterface,
+  GitUserInterface,
+} from "./GitMetadataInterfaces.js";
 
 /**
  * Kombiniert Directory-Funktionalitaet mit Git-Operationen fuer einen
@@ -10,8 +20,14 @@ import type { DirectoryInterface } from "@frxnklyn/directory-contracts";
  *
  * @author Frxnklyn
  */
-export interface AdvancedGitDirectoryManagerInterface extends DirectoryInterface {
+export interface AdvancedGitDirectoryManagerInterface extends GitDirectoryInterface {
   status(): Promise<CommandResultInterface>;
   pull(): Promise<CommandResultInterface>;
+  getGitIgnore(fileName?: string): GitignoreFileInterface;
+  getSubmodules(): GitSubmoduleInterface[];
+  getGitUser(): Promise<GitUserInterface>;
+  getGitHubUser(): Promise<GitHubUserInterface>;
+  getRepository(): Promise<GitHubRepositoryInterface>;
+  getForks(): Promise<GitHubForkInterface[]>;
   getSuggestedActions(): CommandSuggestionInterface[];
 }

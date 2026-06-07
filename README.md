@@ -30,6 +30,41 @@ await git.status();
 await git.pull();
 ```
 
+## Git-Dateien
+
+Wenn der GitManager einen `DirectoryCommandRunner` oder ein explizites
+`GitDirectoryInterface` verwendet, stehen die vorhandenen spezialisierten
+Datei-Editoren zur Verfuegung:
+
+```ts
+const git = new GitManager(new DirectoryCommandRunner("C:/dev/my-repo"));
+
+git.getGitIgnore().addIgnore("dist");
+git.getGitmodules().addSubmodule({
+  name: "shared",
+  path: "packages/shared",
+  url: "https://github.com/example/shared.git",
+});
+
+const submodules = git.getSubmodules();
+```
+
+`getGitIgnore()` ist ein Alias fuer das im File-Manager bestehende
+`getGitignore()`.
+
+## Nutzer und GitHub
+
+```ts
+const localUser = await git.getGitUser();
+const githubUser = await git.getGitHubUser();
+const repository = await git.getRepository();
+const forks = await git.getForks();
+```
+
+`getGitUser()` liest `user.name` und `user.email` aus der lokalen
+Git-Konfiguration. Die GitHub-Methoden verwenden `gh api` und benoetigen eine
+authentifizierte GitHub CLI.
+
 ## AdvancedGitDirectoryManager
 
 `AdvancedGitDirectoryManager` ist bewusst eine bequeme Kombi-Variante fuer den konkreten Git-Directory-Anwendungsfall. Sie erweitert `DirectoryCommandRunner` und benoetigt im Konstruktor nur einen Pfad.
